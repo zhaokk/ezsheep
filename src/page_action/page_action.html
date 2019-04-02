@@ -37,6 +37,10 @@
 		#logoUpload{
 			margin-top:12px;
 		}
+
+		.labelLength::after {
+			content: 'mm';
+		}
 	</style>
 </head>
 <body>
@@ -44,10 +48,15 @@
 		<h2>Thanks for using Uniphone ezSheep plugin</h2>
 		<hr>
 		<img class="logoPreview">
-		<h3>Set label size</h3><p>Currently we only suppport 100mm*60mm label</p>
-		<select disabled>
-			<option title="">100mm*60mm</option>
+		<h3>Input your lable size</h3><p>only 100mm*60mm label support customized logo and joke</p>
+		<select id="labelSize">
+			<option value="100*60">100mm*60mm</option>
+			<option title="small">simple and small</option>
 		</select>
+		<label for="width">width:</label>
+		<input type="text" id="width" class="labelLength" value="100" onblur="widthOnblur(this)"><br>
+		<label for="female">height:</label>
+		<input type="text" id="height" class="labelLength" value="heightOnblur(this)"><br>
 		<h3>upload your logo image</h3>
 		<input id="logoUpload" type="file" accept=".png,.jpg,.jpeg">
 		
