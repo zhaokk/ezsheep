@@ -21,6 +21,13 @@
 }
 
 .ad {
+    -webkit-box-sizing: border-box;
+    border: 7px solid #585858;
+    page-break-before: always;
+    position: relative;
+    width:100mm;
+    overflow: hidden;
+    height: 60mm;
     border-color: #2196F3;
     background-color: #F2F4F5;
     height: auto;

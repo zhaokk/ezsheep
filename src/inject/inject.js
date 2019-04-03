@@ -75,25 +75,27 @@ chrome.extension.sendMessage({}, function (response) {
 					}
 				}
 
-				var newJoke = new Promise(function (resolve, reject) {
-					$.ajax({
-						url: "https://icanhazdadjoke.com/",
-						type: "GET",
-						beforeSend: function (xhr) {
-							xhr.setRequestHeader('Accept', 'text/plain');
-						},
-						success: function (data) {
-							if (data.length > 90) {
-								console.log(data + "   too long");
-								newJoke().then(data => {
+				var newJoke = () => {
+					new Promise(function (resolve, reject) {
+						$.ajax({
+							url: "https://icanhazdadjoke.com/",
+							type: "GET",
+							beforeSend: function (xhr) {
+								xhr.setRequestHeader('Accept', 'text/plain');
+							},
+							success: function (data) {
+								if (data.length > 90) {
+									console.log(data + "   too long");
+									newJoke().then(data => {
+										resolve(data)
+									})
+								} else {
 									resolve(data)
-								})
-							} else {
-								resolve(data)
+								}
 							}
-						}
+						});
 					});
-				});
+				}
 
 				var getLogoPromise = new Promise(function (resolve, reject) {
 					chrome.storage.local.get('logo', function (result) {
@@ -108,7 +110,7 @@ chrome.extension.sendMessage({}, function (response) {
 				var getWidthPromise = new Promise(function (resolve, reject) {
 					chrome.storage.local.get('labelWidth', function (result) {
 						let labelWidth = ''
-						if (result.logo != undefined && result.logo.length > 0) {
+						if (result != undefined) {
 							labelWidth = result.labelWidth;
 						}
 						resolve(labelWidth);
@@ -118,7 +120,7 @@ chrome.extension.sendMessage({}, function (response) {
 				var getHeightPromise = new Promise(function (resolve, reject) {
 					chrome.storage.local.get('labelHeight', function (result) {
 						let labelHeight = ''
-						if (result.logo != undefined && result.logo.length > 0) {
+						if (result != undefined) {
 							labelHeight = result.labelHeight;
 						}
 						resolve(labelHeight);
@@ -134,19 +136,19 @@ chrome.extension.sendMessage({}, function (response) {
 				}
 
 				let count = 0;
-		
+
 				// start
-				Promise.all([ getLogoPromise, getWidthPromise, getHeightPromise]).then(
+				Promise.all([getLogoPromise, getWidthPromise, getHeightPromise]).then(
 					(values) => start(values[0], values[1], values[2])
 				)
 
 				function start(logoUrl, labelWidth, labelHeight) {
 					let customizeLabel = false;
-					if(labelWidth&&labelHeight){
+					if (labelWidth && labelHeight && (labelWidth != "100" || labelHeight != "60")) {
 						customizeLabel = true;
 					}
 					if (customizeLabel) {
-						simpleConvert(labelWidth,labelHeight);
+						simpleConvert(labelWidth, labelHeight);
 					} else {
 						convertAddresses(logoUrl);
 					}
@@ -159,22 +161,22 @@ chrome.extension.sendMessage({}, function (response) {
 							let oneLabel = new shippingInfo($(this).html());
 							oneLabel.logoUrl = logoUrl;
 							var key = oneLabel.receiver.replace(/\s/g, '-');
-							Promise.all([ newJoke, getVariationPromise(key)]).then(
+							Promise.all([newJoke(), getVariationPromise(key)]).then(
 								(values) => {
 									oneLabel.joke = "  " + values[0];
 									oneLabel.variation = values[1]
 									let labelHtmlContent = '';
-									if(oneLabel.logoUrl){
-										labelHtmlContent =  appendOneLabelWithLogo(oneLabel);
-									}else {
-										labelHtmlContent =  appendOneLabelWithOutLogo(oneLabel);
+									if (oneLabel.logoUrl) {
+										labelHtmlContent = appendOneLabelWithLogo(oneLabel);
+									} else {
+										labelHtmlContent = appendOneLabelWithOutLogo(oneLabel);
 									}
 									appendContentToBody(labelHtmlContent);
 								}
 							)
 						}
-					).promise().done(function(){
-						if(logoUrl){
+					).promise().done(function () {
+						if (logoUrl) {
 							$('.logoImg').each(function () {
 								$(this).attr('src', test.logoUrl);
 							});
@@ -183,26 +185,35 @@ chrome.extension.sendMessage({}, function (response) {
 					});
 				}
 
-				var simpleConvert = (labelWidth,labelHeight) => {
+				var simpleConvert = (labelWidth, labelHeight) => {
 					$(".A2").each(
 						function () {
+							console.log($(this).html());
 							count++;
 							let oneLabel = new shippingInfo($(this).html());
-							appendSimpleLabel(oneLabel);
+							var key = oneLabel.receiver.replace(/\s/g, '-');
+							getVariationPromise(key).then(
+								(variation) => {
+									oneLabel.variation = variation;
+									let label = appendSimpleLabel(oneLabel);
+									appendContentToBody(label);
+									$('.addressLabel').css('width', labelWidth + 'mm');
+									$('.addressLabel').css('height', labelHeight + 'mm');
+								}
+							);
+
 						}
-					).promise().done(function(){
-						$('.addressLabel').css('width',labelWidth+'mm');
-						$('.labelHeight').css('height',labelHeight+'mm');
+					).promise().done(function () {
 						appendAd();
 					});
 				}
 
 				function appendContentToBody(label) {
-					$("body").after(label);
+					$("body").before(label);
 				}
 
 				function appendSimpleLabel(labelModel) {
-					label = `
+					return `
 						<div>
 						<div class="addressLabel">
 							<div class="labelContent">
@@ -222,9 +233,9 @@ chrome.extension.sendMessage({}, function (response) {
 						<br class="no-print">
 						</div>`;
 				}
-				
+
 				function appendOneLabelWithOutLogo(labelModel) {
-					return  `<div>
+					return `<div>
 					<div class="addressLabel">
 						<div class="labelContent">
 						<h2 class="sectionLabel">Receiver:</h2>
@@ -252,9 +263,9 @@ chrome.extension.sendMessage({}, function (response) {
 					</div>
 					 `;
 				}
-				
+
 				function appendOneLabelWithLogo(labelModel) {
-					return  ` <div>
+					return ` <div>
 					<div class="addressLabel">
 						<div class="labelContent">
 						<h2 class="sectionLabel">Receiver:</h2>
@@ -286,13 +297,13 @@ chrome.extension.sendMessage({}, function (response) {
 					</div>
 					 `;
 				}
-				
-				
+
+
 				function appendAd() {
 					{
 						let ad =
 							`<div class="no-print">
-								<div class="addressLabel ad">
+								<div class="ad">
 									<div class="labelContent">
 									<div>
 										<h2 >Thx for using uniphone lable printer plugin #${count}</h2><br>
@@ -315,7 +326,7 @@ chrome.extension.sendMessage({}, function (response) {
 								</div>
 								<br class="no-print">
 								</div>`;
-						$("body").after(ad);
+						$("body").before(ad);
 						$("body").css('display', 'none');
 					}
 				}
@@ -327,83 +338,6 @@ chrome.extension.sendMessage({}, function (response) {
 					$(".variation").removeClass("no-print");
 				}
 
-			
-
-				function appendOneLabel(test, haveLogo) {
-					var key = test.receiver.replace(/\s/g, '-');
-					chrome.storage.local.get(key, function (result) {
-						test.variation = result[key];
-						if (haveLogo) {
-							label = `
-						<div>
-						<div class="addressLabel">
-							<div class="labelContent">
-							<h2 class="sectionLabel">Receiver:</h2>
-							<div class="address">
-								<h1 class="lowWeight">${test.receiver}</h1>
-								<br />
-								<h1>${test.addressLine1}</h1>
-								<br />
-								<h1 >${test.addressLine2}</h1>
-								<br />
-								<h1>${test.addressLine3}</h1>
-							</div>
-							<div class="bottom">
-								<div class="horDivider"></div>
-								<div class="joke">
-								<h3 class="sectionLabel">😆 Joke of the day:😆</h3>
-								<br />
-								<p class="jokeContent">${test.joke}</p>
-								</div>
-								<div class="divider"></div>
-									<div class="logo">
-										<img class="logoImg"/>
-									</div>
-							</div>
-							</div>
-							<div class="variation">${test.variation}</div>
-						</div>
-						<br class="no-print">
-						</div>
-						 `;
-						} else {
-							label = `
-						<div>
-						<div class="addressLabel">
-							<div class="labelContent">
-							<h2 class="sectionLabel">Receiver:</h2>
-							<div class="address">
-								<h1 class="lowWeight">${test.receiver}</h1>
-								<br />
-								<h1>${test.addressLine1}</h1>
-								<br />
-								<h1 >${test.addressLine2}</h1>
-								<br />
-								<h1>${test.addressLine3}</h1>
-							</div>
-							<div class="bottom">
-								<div class="horDivider"></div>
-								<div class="jokeNoLogo">
-								<h3 class="sectionLabel">😆 Joke of the day:😆</h3>
-								<br />
-								<p class="jokeContent">${test.joke}</p>
-								</div>
-							</div>
-							</div>
-							<div class="variation">${test.variation}</div>
-						</div>
-						<br class="no-print">
-						</div>
-						 `;
-						}
-
-						$("body").after(label);
-						$('.logoImg').each(function () {
-							$(this).attr('src', test.logoUrl);
-						});
-					});
-				}
-				
 			}
 		}
 	}, 10);

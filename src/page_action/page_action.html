@@ -1,66 +1,92 @@
 <html>
+
 <head>
 	<meta charset="utf-8" />
 	<title>Page Title</title>
-	<script src="jquery.min.js"> </script>
-	<script src="popup.js"> </script>
+	<script src="jquery.min.js">
+	</script>
+	<script src="popup.js">
+	</script>
 	<style type="text/css">
-	@import url('https://fonts.googleapis.com/css?family=Roboto');
+		@import url('https://fonts.googleapis.com/css?family=Roboto');
 
 		body {
 			background-color: #F2F4F5;
 		}
+
 		#mainPopup {
 			padding: 10px;
 			height: auto;
 			width: 400px;
 			font-family: Helvetica, Ubuntu, Arial, sans-serif;
 		}
-		.logoPreview{
-			-webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
-  filter: grayscale(100%);
+
+		.logoPreview {
+			-webkit-filter: grayscale(100%);
+			/* Safari 6.0 - 9.0 */
+			filter: grayscale(100%);
 		}
 
-		h3,h2,p{
+		h3,
+		h2,
+		p {
 			font-family: 'Archivo', sans-serif !important;
 		}
 
-		h3{
+		h3 {
 			margin-bottom: 0px;
 		}
-		p{
+
+		p {
 			margin-top: 0px;
 		}
+
 		h2 {
 			margin: 0px;
 		}
-		#logoUpload{
-			margin-top:12px;
+
+		#logoUpload {
+			margin-top: 12px;
 		}
 
-		.labelLength::after {
+		.labelSize::after {
 			content: 'mm';
+		}
+
+		.labelSize {
+			position: relative;
+			width: 100px
+		}
+	
+		.labelSize::after {
+			position: absolute;
+			top: 2px;
+			right: .5em;
 		}
 	</style>
 </head>
+
 <body>
-		<div id="mainPopup">
+	<div id="mainPopup">
 		<h2>Thanks for using Uniphone ezSheep plugin</h2>
 		<hr>
 		<img class="logoPreview">
-		<h3>Input your lable size</h3><p>only 100mm*60mm label support customized logo and joke</p>
-		<select id="labelSize">
-			<option value="100*60">100mm*60mm</option>
-			<option title="small">simple and small</option>
-		</select>
+		<h3>Input your lable size</h3>
+		<p>only 100mm*60mm label support customized logo and joke</p>
 		<label for="width">width:</label>
-		<input type="text" id="width" class="labelLength" value="100" onblur="widthOnblur(this)"><br>
+		<div class="labelSize">
+			<input type="number" max="200" min="5" size="5" id="width" class="labelLength" value="100">
+			<br>
+		</div>
 		<label for="female">height:</label>
-		<input type="text" id="height" class="labelLength" value="heightOnblur(this)"><br>
+		<div class="labelSize">
+			<input type="number" max="200" min="5" size="5" id="height" class="labelLength" value="60">
+			<br>
+		</div>
 		<h3>upload your logo image</h3>
 		<input id="logoUpload" type="file" accept=".png,.jpg,.jpeg">
-		
-		
-		</div>
+
+	</div>
 </body>
+
 </html>

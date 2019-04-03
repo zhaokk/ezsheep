@@ -29,6 +29,16 @@ function getBase64(file) {
 }
 
 $(function () {
+
+    chrome.storage.local.get('labelHeight', function (result) {
+        $("#Height").value(result.labelHeight);
+    });
+
+
+    chrome.storage.local.get('labelWidth', function (result) {
+        $("#width").value(result.labelWidth);
+    });
+
     $("#logoUpload").change(function () {
         const selectedFile = document.getElementById('logoUpload').files[0];
         console.log(selectedFile);
@@ -45,36 +55,32 @@ $(function () {
 
     });
 
-    $("#labelSize").change(
-        function (e) {
-            var valueSelected = this.value;
-            chrome.storage.local.set({
-                'labelSize': valueSelected
-            }, function () {
-                chrome.storage.local.get('labelSize', function (result) {
-                    console.log(result.labelSize);
-                });
+    function widthOnblur(value) {
+        chrome.storage.local.set({
+            'labelWidth': value
+        }, function () {
+            chrome.storage.local.get('labelWidth', function (result) {
+                console.log(result.labelWidth);
             });
-        }
-    );
+        });
+    }
+    
+    function heightOnblur(value) {
+        chrome.storage.local.set({
+            'labelHeight': value
+        }, function () {
+            chrome.storage.local.get('labelHeight', function (result) {
+                console.log(result.labelHeight);
+            });
+        });
+    }
+
+    $("#width").blur(function () {
+        widthOnblur(this.value);
+    });
+    
+    $("#height").blur(function () {
+        heightOnblur(this.value);
+    });
+
 });
-
-function widthOnblur(input) {
-    chrome.storage.local.set({
-        'labelWidth': valueSelected
-    }, function () {
-        chrome.storage.local.get('labelWidth', function (result) {
-            console.log(result.labelWidth);
-        });
-    });
-}
-
-function heightOnblur(input) {
-    chrome.storage.local.set({
-        'labelHeight': valueSelected
-    }, function () {
-        chrome.storage.local.get('labelHeight', function (result) {
-            console.log(result.labelSize);
-        });
-    });
-}
