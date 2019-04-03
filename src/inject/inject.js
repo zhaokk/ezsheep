@@ -75,8 +75,8 @@ chrome.extension.sendMessage({}, function (response) {
 					}
 				}
 
-				var newJoke = () => {
-					new Promise(function (resolve, reject) {
+				function newJoke() {
+					return new Promise(function (resolve, reject) {
 						$.ajax({
 							url: "https://icanhazdadjoke.com/",
 							type: "GET",
@@ -172,15 +172,16 @@ chrome.extension.sendMessage({}, function (response) {
 										labelHtmlContent = appendOneLabelWithOutLogo(oneLabel);
 									}
 									appendContentToBody(labelHtmlContent);
+									if (logoUrl) {
+										$('.logoImg').each(function () {
+											$(this).attr('src', logoUrl);
+										});
+									}
 								}
 							)
 						}
 					).promise().done(function () {
-						if (logoUrl) {
-							$('.logoImg').each(function () {
-								$(this).attr('src', test.logoUrl);
-							});
-						}
+						
 						appendAd();
 					});
 				}

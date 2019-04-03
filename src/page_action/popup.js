@@ -31,12 +31,28 @@ function getBase64(file) {
 $(function () {
 
     chrome.storage.local.get('labelHeight', function (result) {
-        $("#Height").value(result.labelHeight);
+        let height = 60;
+        if(result.labelHeight != undefined){
+            height = result.labelHeight;
+        }
+        $("#height").val(height);
     });
 
 
     chrome.storage.local.get('labelWidth', function (result) {
-        $("#width").value(result.labelWidth);
+        let width = 100;
+        if(result.labelWidth != undefined){
+            height = result.labelWidth;
+        }
+        $("#width").val(height);
+    });
+
+    chrome.storage.local.get('logo', function (result) {
+        let logoUrl = ''
+        if (result.logo != undefined && result.logo.length > 0) {
+            logoUrl = result.logo;
+            $(".logoPreview").attr('src', logoUrl);
+        }
     });
 
     $("#logoUpload").change(function () {
