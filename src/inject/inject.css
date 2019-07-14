@@ -67,15 +67,16 @@ h1,p,h2 {
     font-size: 12px;
 }
 .address h1 {
-    font-size: 4mm;
+    font-size: 5mm;
     
 }
 .joke {
     width: 60%;
     float: left;
 }
-.jokeNoLogo {
+.Message {
     width: 100%;
+    text-align: center;
 }
 
 .bottom{

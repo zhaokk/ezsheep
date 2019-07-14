@@ -42,10 +42,12 @@ $(function () {
     chrome.storage.local.get('labelWidth', function (result) {
         let width = 100;
         if(result.labelWidth != undefined){
-            height = result.labelWidth;
+            width = result.labelWidth;
         }
-        $("#width").val(height);
+        $("#width").val(width);
     });
+
+    
 
     chrome.storage.local.get('logo', function (result) {
         let logoUrl = ''

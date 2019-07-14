@@ -121,7 +121,8 @@ chrome.extension.sendMessage({}, function (response) {
 					chrome.storage.local.get('labelHeight', function (result) {
 						let labelHeight = ''
 						if (result != undefined) {
-							labelHeight = result.labelHeight;
+							labelHeight = result.la
+							belHeight;
 						}
 						resolve(labelHeight);
 					});
@@ -154,34 +155,30 @@ chrome.extension.sendMessage({}, function (response) {
 					}
 				}
 
-				var convertAddresses = (logoUrl) => {
+				var convertAddresses =async (logoUrl) => {
 					$(".A2").each(
-						function () {
+						async function () {
 							count++;
 							let oneLabel = new shippingInfo($(this).html());
 							oneLabel.logoUrl = logoUrl;
 							var key = oneLabel.receiver.replace(/\s/g, '-');
-							Promise.all([newJoke(), getVariationPromise(key)]).then(
-								(values) => {
-									oneLabel.joke = "  " + values[0];
-									oneLabel.variation = values[1]
-									let labelHtmlContent = '';
-									if (oneLabel.logoUrl) {
-										labelHtmlContent = appendOneLabelWithLogo(oneLabel);
-									} else {
-										labelHtmlContent = appendOneLabelWithOutLogo(oneLabel);
-									}
-									appendContentToBody(labelHtmlContent);
-									if (logoUrl) {
-										$('.logoImg').each(function () {
-											$(this).attr('src', logoUrl);
-										});
-									}
-								}
-							)
+							var variatoin = await getVariationPromise(key);
+							oneLabel.variation = variatoin;
+							let labelHtmlContent = '';
+							if (oneLabel.logoUrl) {
+								labelHtmlContent = appendOneLabelWithLogo(oneLabel);
+							} else {
+								labelHtmlContent = appendOneLabelWithOutLogo(oneLabel);
+							}
+							appendContentToBody(labelHtmlContent);
+							if (logoUrl) {
+								$('.logoImg').each(function () {
+									$(this).attr('src', logoUrl);
+								});
+							}
 						}
 					).promise().done(function () {
-						
+
 						appendAd();
 					});
 				}
@@ -251,8 +248,9 @@ chrome.extension.sendMessage({}, function (response) {
 						</div>
 						<div class="bottom">
 							<div class="horDivider"></div>
-							<div class="jokeNoLogo">
-							<h3 class="sectionLabel">😆 Joke of the day:😆</h3>
+							<div class="Message">
+							<h3 class="sectionLabel">If you ❤️ it, Plz leave a 5 star review ⭐⭐⭐⭐⭐</h3>
+							<h3 class="sectionLabel">💬 Any concerns please text me <b>0451411202</b> 💬</h3>
 							<br />
 							<p class="jokeContent">${labelModel.joke}</p>
 							</div>
@@ -281,11 +279,6 @@ chrome.extension.sendMessage({}, function (response) {
 						</div>
 						<div class="bottom">
 							<div class="horDivider"></div>
-							<div class="joke">
-							<h3 class="sectionLabel">😆 Joke of the day:😆</h3>
-							<br />
-							<p class="jokeContent">${labelModel.joke}</p>
-							</div>
 							<div class="divider"></div>
 								<div class="logo">
 									<img class="logoImg"/>
