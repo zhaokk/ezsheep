@@ -20,7 +20,7 @@ chrome.extension.sendMessage({}, function (response) {
 						// use product name first 10 char
 						variation = selected.next().find('#BuyerIdNameEmail').find("a").text().substring(0, 30) + "||" + variation;
 						if (number != "1") {
-							variation += '*' + number
+							variation += '* 【' + number + '】'
 						}
 						let outPut = '-' + name + '-' + variation
 						name = name.replace(' ', '');
@@ -122,7 +122,6 @@ chrome.extension.sendMessage({}, function (response) {
 						let labelHeight = ''
 						if (result != undefined) {
 							labelHeight = result.la
-							belHeight;
 						}
 						resolve(labelHeight);
 					});
