@@ -28,7 +28,8 @@
     {
       "matches": [
         "https://k2b-print.ebay.com.au/*",
-        "https://k2b-bulk.ebay.com.au/*"
+        "https://k2b-bulk.ebay.com.au/*",
+        "https://offer.ebay.com.au/*"
       ],
       "js": [
         "js/jquery/jquery.min.js",
